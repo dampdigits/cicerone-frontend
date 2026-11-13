@@ -216,7 +216,7 @@ export const App: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
       <Header
         onOpenHistory={() => setIsHistoryOpen(true)}
         historyCount={history.length}
@@ -227,7 +227,7 @@ export const App: React.FC = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Error notification banner */}
         {errorBanner && (
-          <div className="w-full max-w-4xl mx-auto p-4 rounded-xl bg-red-950/60 border border-red-500/40 text-red-200 text-sm flex items-center justify-between gap-3 shadow-lg">
+          <div className="w-full max-w-4xl mx-auto p-4 rounded-xl bg-neutral-900 border border-red-500/40 text-red-200 text-sm flex items-center justify-between gap-3 shadow-lg">
             <div className="flex items-center gap-2.5">
               <ShieldAlert className="w-5 h-5 text-red-400 shrink-0" />
               <span>{errorBanner}</span>
@@ -261,13 +261,13 @@ export const App: React.FC = () => {
             />
 
             {/* Quick Demo Preview Option */}
-            <div className="w-full max-w-4xl mx-auto glass-panel rounded-2xl p-5 border border-slate-800 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="w-full max-w-4xl mx-auto bg-black rounded-2xl p-5 border border-white/10 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-left">
-                <div className="font-bold text-sm text-slate-200 flex items-center gap-2">
-                  <Compass className="w-4 h-4 text-brand-400" />
+                <div className="font-bold text-sm text-neutral-200 flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-navy-400" />
                   <span>Want to explore the UI immediately?</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-neutral-400 mt-0.5">
                   Load a pre-synthesized OAuth guide for Google (demonstrating Google Meet vs Drive branching, checklists, and zoom modal).
                 </p>
               </div>
@@ -275,9 +275,9 @@ export const App: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleLoadSample(SAMPLE_GOOGLE_RESULT)}
-                className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-brand-300 border border-brand-500/30 hover:border-brand-500 transition-all shadow-md"
+                className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-neutral-950 hover:bg-neutral-900 text-navy-300 border border-navy-800 hover:border-navy-600 transition-all shadow-md"
               >
-                <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+                <Sparkles className="w-3.5 h-3.5 text-navy-400" />
                 <span>Load Google Demo Result</span>
               </button>
             </div>

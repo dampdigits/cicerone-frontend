@@ -7,9 +7,7 @@ import {
   Calendar,
   Layers,
   Star,
-  ExternalLink,
   ChevronRight,
-  Sparkles,
 } from 'lucide-react';
 import { SavedResearchSession } from '../types/research';
 
@@ -51,7 +49,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm"
         />
 
         {/* Drawer panel */}
@@ -60,23 +58,23 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-          className="relative w-full max-w-md bg-slate-900 border-l border-slate-800 h-full shadow-2xl flex flex-col z-10"
+          className="relative w-full max-w-md bg-black border-l border-neutral-800 h-full shadow-2xl flex flex-col z-10"
         >
           {/* Header */}
-          <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+          <div className="p-5 border-b border-neutral-800 flex items-center justify-between bg-black/90">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400">
+              <div className="w-8 h-8 rounded-lg bg-navy-950 border border-navy-800 flex items-center justify-center text-navy-400">
                 <History className="w-4 h-4" />
               </div>
               <div>
                 <h3 className="font-bold text-base text-white">Research History</h3>
-                <p className="text-xs text-slate-400">Stored in browser local storage</p>
+                <p className="text-xs text-neutral-400">Stored in browser local storage</p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -86,9 +84,9 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {sessions.length === 0 ? (
               <div className="text-center py-16 px-4">
-                <History className="w-10 h-10 text-slate-700 mx-auto mb-3" />
-                <p className="text-sm font-semibold text-slate-400">No past research runs yet</p>
-                <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto">
+                <History className="w-10 h-10 text-neutral-700 mx-auto mb-3" />
+                <p className="text-sm font-semibold text-neutral-400">No past research runs yet</p>
+                <p className="text-xs text-neutral-600 mt-1 max-w-xs mx-auto">
                   When you initiate OAuth research for a provider, the results will automatically be stored here.
                 </p>
               </div>
@@ -102,7 +100,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                 return (
                   <div
                     key={session.id}
-                    className="glass-panel rounded-xl p-4 border border-slate-800 hover:border-brand-500/40 transition-all flex flex-col justify-between gap-3 group relative cursor-pointer"
+                    className="bg-neutral-950 rounded-xl p-4 border border-neutral-800 hover:border-navy-500/50 transition-all flex flex-col justify-between gap-3 group relative cursor-pointer"
                     onClick={() => {
                       onSelectSession(session);
                       onClose();
@@ -115,8 +113,8 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                           <span
                             className={`text-[10px] px-2 py-0.2 rounded-full uppercase font-bold border ${
                               session.result.status === 'completed'
-                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                                : 'bg-slate-800 text-slate-400 border-slate-700'
+                                ? 'bg-navy-950 text-navy-300 border-navy-800'
+                                : 'bg-neutral-900 text-neutral-400 border-neutral-800'
                             }`}
                           >
                             {session.result.status}
@@ -129,36 +127,36 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                             e.stopPropagation();
                             onDeleteSession(session.id);
                           }}
-                          className="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 transition-all"
+                          className="opacity-0 group-hover:opacity-100 p-1 text-neutral-500 hover:text-red-400 transition-all"
                           title="Delete from history"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
 
-                      <div className="flex items-center gap-3 text-xs text-slate-400 mt-2 flex-wrap">
+                      <div className="flex items-center gap-3 text-xs text-neutral-400 mt-2 flex-wrap">
                         <span className="flex items-center gap-1 font-mono text-[11px]">
-                          <Calendar className="w-3 h-3 text-slate-500" />
+                          <Calendar className="w-3 h-3 text-neutral-500" />
                           <span>{formatDate(session.timestamp)}</span>
                         </span>
 
                         {stepCount > 0 && (
                           <span className="flex items-center gap-1 font-mono text-[11px]">
-                            <Layers className="w-3 h-3 text-brand-400" />
+                            <Layers className="w-3 h-3 text-navy-400" />
                             <span>{stepCount} steps</span>
                           </span>
                         )}
 
                         {difficulty?.score && (
-                          <span className="flex items-center gap-1 font-mono text-[11px] text-amber-300">
-                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                          <span className="flex items-center gap-1 font-mono text-[11px] text-navy-300">
+                            <Star className="w-3 h-3 fill-navy-400 text-navy-400" />
                             <span>{difficulty.score}/5</span>
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-brand-400 font-medium">
+                    <div className="pt-2 border-t border-neutral-850 flex items-center justify-between text-xs text-navy-400 font-medium">
                       <span>Click to view guide & workflow</span>
                       <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </div>
@@ -170,7 +168,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
 
           {/* Footer with Clear All */}
           {sessions.length > 0 && (
-            <div className="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
+            <div className="p-4 border-t border-neutral-800 bg-black flex items-center justify-between">
               <button
                 onClick={onClearAll}
                 className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors"
@@ -179,7 +177,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                 <span>Clear All History</span>
               </button>
 
-              <span className="text-xs text-slate-500 font-mono">
+              <span className="text-xs text-neutral-500 font-mono">
                 {sessions.length} saved {sessions.length === 1 ? 'run' : 'runs'}
               </span>
             </div>

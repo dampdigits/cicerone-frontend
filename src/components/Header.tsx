@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Compass, History, RefreshCw, PlusCircle, CheckCircle2, AlertCircle, FileJson } from 'lucide-react';
+import { Compass, History, RefreshCw, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react';
 import { checkBackendHealth } from '../services/api';
 
 interface HeaderProps {
@@ -32,28 +32,28 @@ export const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     pingBackend();
-    const interval = setInterval(pingBackend, 30000); // check every 30s
+    const interval = setInterval(pingBackend, 30000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-black/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/20 text-slate-950">
-            <Compass className="w-6 h-6 stroke-[2.2]" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-navy-800 to-navy-950 border border-navy-700/80 flex items-center justify-center shadow-lg shadow-navy-950 text-navy-300">
+            <Compass className="w-6 h-6 stroke-[2.2] text-navy-300" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+              <span className="font-extrabold text-lg tracking-tight text-white">
                 Cicerone
               </span>
-              <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">
+              <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-navy-950 text-navy-300 border border-navy-800">
                 OAuth Research
               </span>
             </div>
-            <p className="text-xs text-slate-400 hidden sm:block">
+            <p className="text-xs text-neutral-400 hidden sm:block">
               Evidence-backed OAuth application setup guides
             </p>
           </div>
@@ -67,18 +67,18 @@ export const Header: React.FC<HeaderProps> = ({
             title={`Backend Status: ${statusDetail}. Click to re-check.`}
             className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
               backendStatus === 'online'
-                ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/30 hover:bg-emerald-900/40'
+                ? 'bg-navy-950/80 text-navy-300 border-navy-800 hover:bg-navy-900/60'
                 : backendStatus === 'offline'
-                ? 'bg-amber-950/40 text-amber-400 border-amber-500/30 hover:bg-amber-900/40'
-                : 'bg-slate-900 text-slate-400 border-slate-800'
+                ? 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:bg-neutral-850'
+                : 'bg-black text-neutral-500 border-neutral-900'
             }`}
           >
             {backendStatus === 'online' ? (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-navy-400" />
             ) : backendStatus === 'offline' ? (
-              <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+              <AlertCircle className="w-3.5 h-3.5 text-neutral-400" />
             ) : (
-              <RefreshCw className="w-3.5 h-3.5 animate-spin text-slate-400" />
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-neutral-500" />
             )}
             <span>{backendStatus === 'online' ? 'Backend Online' : backendStatus === 'offline' ? 'Backend Offline (port 8000)' : 'Checking...'}</span>
           </button>
@@ -87,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
           {hasResult && (
             <button
               onClick={onNewResearch}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-500 hover:bg-brand-600 text-slate-950 font-semibold transition-all shadow-md shadow-brand-500/20"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-black hover:bg-neutral-200 transition-all shadow-md shadow-white/5"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               <span>New Run</span>
@@ -97,12 +97,12 @@ export const Header: React.FC<HeaderProps> = ({
           {/* History Drawer Trigger */}
           <button
             onClick={onOpenHistory}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all hover:border-slate-700 relative"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-neutral-950 hover:bg-neutral-900 text-neutral-300 border border-neutral-800 hover:border-neutral-700 transition-all relative"
           >
-            <History className="w-3.5 h-3.5 text-slate-400" />
+            <History className="w-3.5 h-3.5 text-neutral-400" />
             <span>History</span>
             {historyCount > 0 && (
-              <span className="w-4 h-4 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 text-[10px] flex items-center justify-center font-bold">
+              <span className="w-4 h-4 rounded-full bg-navy-900 text-navy-300 border border-navy-700 text-[10px] flex items-center justify-center font-bold">
                 {historyCount}
               </span>
             )}

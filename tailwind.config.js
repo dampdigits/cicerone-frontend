@@ -8,18 +8,35 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Dark and Light shades of Navy Blue for accent
+        navy: {
+          950: '#050c18', // Deepest midnight navy
+          900: '#0a1628', // Dark navy surface
+          850: '#0e1f38', // Dark navy card
+          800: '#142a4d', // Dark navy border
+          700: '#1d3e6f', // Medium navy
+          600: '#1e40af', // Royal navy
+          500: '#2563eb', // Pure navy blue
+          400: '#3b82f6', // Light navy
+          300: '#60a5fa', // Bright light navy
+          200: '#93c5fd', // Soft light navy
+          100: '#dbeafe',
+          50: '#eff6ff',
+        },
+        // Alias brand to navy for seamless accent alignment
         brand: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
-          950: '#052e16',
+          950: '#050c18',
+          900: '#0a1628',
+          850: '#0e1f38',
+          800: '#142a4d',
+          700: '#1d3e6f',
+          600: '#1e40af',
+          500: '#2563eb',
+          400: '#3b82f6',
+          300: '#60a5fa',
+          200: '#93c5fd',
+          100: '#dbeafe',
+          50: '#eff6ff',
         },
       },
       fontFamily: {

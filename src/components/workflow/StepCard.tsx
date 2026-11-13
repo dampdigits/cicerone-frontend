@@ -9,8 +9,6 @@ import {
   GitBranch,
   GitMerge,
   Maximize2,
-  AlertCircle,
-  HelpCircle,
 } from 'lucide-react';
 import { BranchNode } from '../../types/branching';
 import { WorkflowStep } from '../../types/research';
@@ -49,12 +47,12 @@ export const StepCard: React.FC<StepCardProps> = ({
       whileHover={{ y: -3, scale: 1.015 }}
       whileTap={{ scale: 0.99 }}
       transition={{ duration: 0.2 }}
-      className={`glass-panel rounded-2xl p-5 border transition-all cursor-pointer relative group flex flex-col justify-between ${
+      className={`rounded-2xl p-5 border transition-all cursor-pointer relative group flex flex-col justify-between ${
         isFullyCompleted
-          ? 'border-emerald-500/40 bg-emerald-950/20 shadow-emerald-950/20 shadow-lg'
+          ? 'border-navy-600/60 bg-navy-950/40 shadow-navy-950/50 shadow-lg'
           : isFocused
-          ? 'border-brand-500 ring-2 ring-brand-500/30'
-          : 'border-slate-800 hover:border-brand-500/40 hover:shadow-xl hover:shadow-brand-500/10'
+          ? 'border-navy-500 ring-2 ring-navy-500/30 bg-neutral-950'
+          : 'bg-neutral-950 border-neutral-800 hover:border-navy-500/50 hover:shadow-xl hover:shadow-navy-950/50'
       }`}
     >
       <div>
@@ -64,8 +62,8 @@ export const StepCard: React.FC<StepCardProps> = ({
             <span
               className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black font-mono border ${
                 isFullyCompleted
-                  ? 'bg-emerald-500 text-slate-950 border-emerald-400'
-                  : 'bg-slate-900 text-brand-400 border-slate-700'
+                  ? 'bg-navy-600 text-white border-navy-500'
+                  : 'bg-black text-navy-300 border-neutral-800'
               }`}
             >
               {isFullyCompleted ? <CheckCircle2 className="w-4 h-4" /> : `#${step.id}`}
@@ -75,8 +73,8 @@ export const StepCard: React.FC<StepCardProps> = ({
             <span
               className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
                 step.required_for === 'production'
-                  ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                  : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                  ? 'bg-neutral-900 text-neutral-300 border-neutral-700'
+                  : 'bg-navy-950 text-navy-300 border-navy-800'
               }`}
             >
               {step.required_for === 'production' ? 'Production Gate' : 'Core Setup'}
@@ -86,23 +84,21 @@ export const StepCard: React.FC<StepCardProps> = ({
             <span
               className={`text-[10px] font-medium px-2 py-0.5 rounded-full border flex items-center gap-1 ${
                 step.basis === 'verified'
-                  ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/30'
-                  : step.basis === 'inferred'
-                  ? 'bg-blue-950/40 text-blue-400 border-blue-500/30'
-                  : 'bg-slate-900 text-slate-400 border-slate-700'
+                  ? 'bg-navy-950 text-navy-300 border-navy-800'
+                  : 'bg-neutral-900 text-neutral-400 border-neutral-800'
               }`}
             >
               {step.basis === 'verified' ? (
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                <ShieldCheck className="w-3 h-3 text-navy-400" />
               ) : (
-                <ShieldAlert className="w-3 h-3 text-blue-400" />
+                <ShieldAlert className="w-3 h-3 text-neutral-400" />
               )}
               <span className="capitalize">{step.basis}</span>
             </span>
           </div>
 
           {/* Zoom hint icon */}
-          <div className="opacity-40 group-hover:opacity-100 transition-opacity p-1 text-brand-400">
+          <div className="opacity-40 group-hover:opacity-100 transition-opacity p-1 text-navy-400">
             <Maximize2 className="w-4 h-4" />
           </div>
         </div>
@@ -110,33 +106,33 @@ export const StepCard: React.FC<StepCardProps> = ({
         {/* Branch / Scenario annotation tag if present */}
         {node.branchLabel && (
           <div className="mb-2">
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-purple-500/15 text-purple-300 border border-purple-500/30">
-              <GitBranch className="w-3 h-3" />
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-navy-900/80 text-navy-200 border border-navy-700">
+              <GitBranch className="w-3 h-3 text-navy-400" />
               <span>{node.branchLabel}</span>
             </span>
           </div>
         )}
 
         {/* Step Title */}
-        <h4 className="text-base font-bold text-white group-hover:text-brand-300 transition-colors line-clamp-2 mb-2">
+        <h4 className="text-base font-bold text-white group-hover:text-navy-300 transition-colors line-clamp-2 mb-2">
           {step.title}
         </h4>
 
         {/* Sub-steps Checklist Mini-Progress */}
         {subSteps.length > 0 && (
           <div className="mt-3 space-y-2">
-            <div className="flex items-center justify-between text-xs text-slate-400">
+            <div className="flex items-center justify-between text-xs text-neutral-400">
               <span className="font-medium">Checklist Tasks</span>
-              <span className="font-mono text-brand-400 font-bold">
+              <span className="font-mono text-navy-300 font-bold">
                 {completedCount}/{subSteps.length} ({progressPercent}%)
               </span>
             </div>
 
             {/* Progress bar */}
-            <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+            <div className="w-full bg-black h-1.5 rounded-full overflow-hidden border border-neutral-800">
               <div
                 className={`h-full transition-all duration-300 ${
-                  isFullyCompleted ? 'bg-emerald-400' : 'bg-brand-500'
+                  isFullyCompleted ? 'bg-navy-400' : 'bg-navy-500'
                 }`}
                 style={{ width: `${progressPercent}%` }}
               />
@@ -152,26 +148,26 @@ export const StepCard: React.FC<StepCardProps> = ({
                   <div
                     key={idx}
                     onClick={(e) => onToggleSubStep(itemKey, e)}
-                    className="flex items-start gap-2 text-xs text-slate-300 hover:text-white p-1 rounded hover:bg-slate-900/60 transition-colors"
+                    className="flex items-start gap-2 text-xs text-neutral-300 hover:text-white p-1 rounded hover:bg-neutral-900/60 transition-colors"
                   >
                     <button
                       type="button"
-                      className="mt-0.5 shrink-0 text-slate-400 hover:text-brand-400"
+                      className="mt-0.5 shrink-0 text-neutral-400 hover:text-navy-400"
                     >
                       {checked ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-navy-400" />
                       ) : (
-                        <Circle className="w-3.5 h-3.5 text-slate-600" />
+                        <Circle className="w-3.5 h-3.5 text-neutral-600" />
                       )}
                     </button>
-                    <span className={`line-clamp-1 ${checked ? 'line-through text-slate-500' : ''}`}>
+                    <span className={`line-clamp-1 ${checked ? 'line-through text-neutral-500' : ''}`}>
                       {sub}
                     </span>
                   </div>
                 );
               })}
               {subSteps.length > 2 && (
-                <div className="text-[11px] text-slate-500 italic pl-5">
+                <div className="text-[11px] text-neutral-500 italic pl-5">
                   +{subSteps.length - 2} more tasks (click card to view all)
                 </div>
               )}
@@ -181,11 +177,11 @@ export const StepCard: React.FC<StepCardProps> = ({
       </div>
 
       {/* Card Footer: Estimated time & Fork/Merge Indicators */}
-      <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+      <div className="mt-4 pt-3 border-t border-neutral-850 flex items-center justify-between text-xs text-neutral-400">
         <div className="flex items-center gap-1.5">
           {timeStr && (
-            <span className="flex items-center gap-1 text-slate-300 font-mono bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">
-              <Clock className="w-3 h-3 text-brand-400" />
+            <span className="flex items-center gap-1 text-neutral-300 font-mono bg-black px-2 py-0.5 rounded border border-neutral-800">
+              <Clock className="w-3 h-3 text-navy-400" />
               <span>{timeStr}</span>
             </span>
           )}
@@ -194,19 +190,19 @@ export const StepCard: React.FC<StepCardProps> = ({
         <div className="flex items-center gap-2">
           {node.isFork && (
             <span
-              className="flex items-center gap-1 text-[11px] text-purple-400 font-medium"
+              className="flex items-center gap-1 text-[11px] text-navy-300 font-medium"
               title="Branches into multiple alternative or service steps"
             >
-              <GitBranch className="w-3 h-3" />
+              <GitBranch className="w-3 h-3 text-navy-400" />
               <span>Fork ({node.childIds.length})</span>
             </span>
           )}
           {node.isMerge && (
             <span
-              className="flex items-center gap-1 text-[11px] text-blue-400 font-medium"
+              className="flex items-center gap-1 text-[11px] text-neutral-400 font-medium"
               title="Merges from prior branches"
             >
-              <GitMerge className="w-3 h-3" />
+              <GitMerge className="w-3 h-3 text-neutral-400" />
               <span>Merge</span>
             </span>
           )}
