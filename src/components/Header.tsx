@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Compass, History, RefreshCw, PlusCircle, CheckCircle2, AlertCircle } from 'lucide-react';
 import { checkBackendHealth } from '../services/api';
+import { ENV } from '../config/env';
 
 interface HeaderProps {
   onOpenHistory: () => void;
@@ -27,6 +28,14 @@ export const Header: React.FC<HeaderProps> = ({
     } else {
       setBackendStatus('offline');
       setStatusDetail(health.statusText || 'Offline');
+    }
+  };
+
+  const getBackendHost = () => {
+    try {
+      return new URL(ENV.backendDomainUrl).host;
+    } catch {
+      return ENV.backendDomainUrl || 'backend';
     }
   };
 
@@ -80,7 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               <RefreshCw className="w-3.5 h-3.5 animate-spin text-neutral-500" />
             )}
-            <span>{backendStatus === 'online' ? 'Backend Online' : backendStatus === 'offline' ? 'Backend Offline (port 8000)' : 'Checking...'}</span>
+            <span>{backendStatus === 'online' ? 'Backend Online' : backendStatus === 'offline' ? `Backend Offline (${getBackendHost()})` : 'Checking...'}</span>
           </button>
 
           {/* New Research Action */}

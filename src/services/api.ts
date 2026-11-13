@@ -1,6 +1,28 @@
+import { ENV } from '../config/env';
 import { JobAcceptedResponse, JobStatusResponse, ResearchRequest } from '../types/research';
 
-const BASE_URL = '';
+const BASE_URL = ENV.apiUrl;
+
+/**
+ * Builds request headers including any optional API key / Authorization token
+ * configured via environment variables (.env.local).
+ */
+function buildHeaders(extraHeaders: Record<string, string> = {}): Record<string, string> {
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    ...extraHeaders,
+  };
+
+  if (ENV.apiKey) {
+    if (ENV.authHeader.toLowerCase() === 'authorization' && !ENV.apiKey.startsWith('Bearer ')) {
+      headers[ENV.authHeader] = `Bearer ${ENV.apiKey}`;
+    } else {
+      headers[ENV.authHeader] = ENV.apiKey;
+    }
+  }
+
+  return headers;
+}
 
 export class ApiError extends Error {
   status: number;
@@ -19,7 +41,7 @@ export class ApiError extends Error {
 export async function checkBackendHealth(): Promise<{ ok: boolean; statusText?: string }> {
   try {
     const res = await fetch(`${BASE_URL}/healthz/`, {
-      headers: { Accept: 'application/json' },
+      headers: buildHeaders(),
     });
     if (res.ok) {
       const data = await res.json();
@@ -46,10 +68,9 @@ export async function startResearchJob(payload: ResearchRequest): Promise<JobAcc
 
   const res = await fetch(`${BASE_URL}/api/research/`, {
     method: 'POST',
-    headers: {
+    headers: buildHeaders({
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
+    }),
     body: JSON.stringify(cleanPayload),
   });
 
@@ -80,10 +101,9 @@ export async function startResearchJob(payload: ResearchRequest): Promise<JobAcc
 
 export async function getJobStatus(jobId: string): Promise<JobStatusResponse> {
   const res = await fetch(`${BASE_URL}/api/jobs/${encodeURIComponent(jobId)}/status/`, {
-    headers: {
-      Accept: 'application/json',
+    headers: buildHeaders({
       'Cache-Control': 'no-store',
-    },
+    }),
   });
 
   if (!res.ok) {
