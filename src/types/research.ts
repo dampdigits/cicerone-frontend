@@ -104,6 +104,11 @@ export interface PipelineJson {
     domain_source?: string;
   };
   source_urls?: string[];
+  discovery?: {
+    candidates: number;
+    rejected_offdomain: number;
+    selected: number;
+  };
   pages?: ExtractedPage[];
   workflow?: WorkflowData;
   totals?: WorkflowTotals;

@@ -5,6 +5,7 @@ import { JobProgress } from './components/JobProgress';
 import { OutputSwitcher, OutputViewMode } from './components/OutputSwitcher';
 import { MarkdownView } from './components/MarkdownView';
 import { WorkflowView } from './components/workflow/WorkflowView';
+import { DiscoveryView } from './components/DiscoveryView';
 import { HistoryDrawer } from './components/HistoryDrawer';
 import {
   startResearchJob,
@@ -29,7 +30,7 @@ import {
   ResearchRequest,
   SavedResearchSession,
 } from './types/research';
-import { Compass, Sparkles, Play, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { Compass, Sparkles, ShieldAlert } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [result, setResult] = useState<PipelineResult | null>(null);
@@ -47,6 +48,9 @@ export const App: React.FC = () => {
     const saved = getCurrentResult();
     if (saved) {
       setResult(saved);
+      if (saved.status === 'dry_run') {
+        setActiveView('discovery');
+      }
       const sessionKey = saved.provider || 'current';
       setChecklistState(getChecklistState(sessionKey));
     }
@@ -82,7 +86,7 @@ export const App: React.FC = () => {
       setActiveJob(initialJobStatus);
 
       // 2. Begin polling loop
-      pollJob(accepted.job_id, payload.provider, accepted.poll_after_seconds || 2);
+      pollJob(accepted.job_id, payload.provider, accepted.poll_after_seconds || 2, 0);
     } catch (err: any) {
       let msg = err.message || 'Failed to start research run.';
       if (err instanceof ApiError && err.status === 503) {
@@ -93,8 +97,8 @@ export const App: React.FC = () => {
     }
   };
 
-  // Polling loop
-  const pollJob = async (jobId: string, provider: string, pollDelaySec: number) => {
+  // Polling loop with retry limit
+  const pollJob = async (jobId: string, provider: string, pollDelaySec: number, retryCount = 0) => {
     pollTimeoutRef.current = setTimeout(async () => {
       try {
         const statusRes = await getJobStatus(jobId);
@@ -103,7 +107,7 @@ export const App: React.FC = () => {
         if (!statusRes.finished) {
           // Continue polling
           const nextDelay = statusRes.poll_after_seconds || 3;
-          pollJob(jobId, provider, nextDelay);
+          pollJob(jobId, provider, nextDelay, 0);
         } else {
           // Finished!
           if (statusRes.result) {
@@ -118,8 +122,13 @@ export const App: React.FC = () => {
         }
       } catch (err: any) {
         console.error('Polling error:', err);
-        // Retry a couple of times before giving up
-        pollJob(jobId, provider, 3);
+        if (retryCount < 5) {
+          // Retry with exponential/linear backoff
+          pollJob(jobId, provider, 3, retryCount + 1);
+        } else {
+          setErrorBanner(`Connection to backend failed while polling status. (${err.message || 'Network error'})`);
+          setActiveJob(null);
+        }
       }
     }, pollDelaySec * 1000);
   };
@@ -128,6 +137,13 @@ export const App: React.FC = () => {
     setResult(newResult);
     setActiveJob(null);
     saveCurrentResult(newResult);
+
+    // If dry_run, automatically switch to discovery view
+    if (newResult.status === 'dry_run') {
+      setActiveView('discovery');
+    } else {
+      setActiveView('workflow');
+    }
 
     const initialChecklist: Record<string, boolean> = {};
     setChecklistState(initialChecklist);
@@ -143,6 +159,15 @@ export const App: React.FC = () => {
     };
     saveSessionToHistory(session);
     setHistory(getHistory());
+  };
+
+  // Run full research from a dry run preview
+  const handleRunFullResearch = (targetProvider: string) => {
+    const payload: ResearchRequest = {
+      provider: targetProvider,
+      dry_run: false,
+    };
+    handleStartResearch(payload);
   };
 
   // Toggle sub-step in checklist
@@ -173,6 +198,11 @@ export const App: React.FC = () => {
   const handleSelectHistorySession = (session: SavedResearchSession) => {
     setResult(session.result);
     saveCurrentResult(session.result);
+    if (session.result.status === 'dry_run') {
+      setActiveView('discovery');
+    } else {
+      setActiveView('workflow');
+    }
     const sessionKey = session.result.provider || 'current';
     setChecklistState(getChecklistState(sessionKey));
   };
@@ -198,6 +228,7 @@ export const App: React.FC = () => {
   const handleLoadSample = (sample: PipelineResult) => {
     setResult(sample);
     saveCurrentResult(sample);
+    setActiveView('workflow');
     const sessionKey = sample.provider || 'current';
     setChecklistState(getChecklistState(sessionKey));
     setErrorBanner(null);
@@ -284,7 +315,7 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* 3. Output Sections (Switchable between Markdown Guide and Workflow UI) */}
+        {/* 3. Output Sections (Switchable between Discovered URLs, Markdown Guide, and Workflow UI) */}
         {!activeJob && result && (
           <div className="space-y-6 animate-fadeIn">
             <OutputSwitcher
@@ -293,14 +324,22 @@ export const App: React.FC = () => {
               onViewChange={setActiveView}
               completedSubStepsCount={completedSubSteps}
               totalSubStepsCount={totalSubSteps}
+              onRunFullResearch={handleRunFullResearch}
             />
 
-            {activeView === 'workflow' ? (
+            {activeView === 'discovery' ? (
+              <DiscoveryView
+                result={result}
+                onRunFullResearch={handleRunFullResearch}
+                isLoadingFullResearch={Boolean(activeJob)}
+              />
+            ) : activeView === 'workflow' ? (
               <WorkflowView
                 result={result}
                 checklistState={checklistState}
                 onToggleSubStep={handleToggleSubStep}
                 onSelectAllSubSteps={handleSelectAllSubSteps}
+                onRunFullResearch={handleRunFullResearch}
               />
             ) : (
               <MarkdownView result={result} />

@@ -42,6 +42,7 @@ export async function checkBackendHealth(): Promise<{ ok: boolean; statusText?: 
   try {
     const res = await fetch(`${BASE_URL}/healthz/`, {
       headers: buildHeaders(),
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();
@@ -101,9 +102,8 @@ export async function startResearchJob(payload: ResearchRequest): Promise<JobAcc
 
 export async function getJobStatus(jobId: string): Promise<JobStatusResponse> {
   const res = await fetch(`${BASE_URL}/api/jobs/${encodeURIComponent(jobId)}/status/`, {
-    headers: buildHeaders({
-      'Cache-Control': 'no-store',
-    }),
+    headers: buildHeaders(),
+    cache: 'no-store',
   });
 
   if (!res.ok) {

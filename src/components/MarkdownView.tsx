@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Copy, Check, BookOpen, ExternalLink } from 'lucide-react';
+import { Copy, Check, BookOpen, ExternalLink, FileSearch } from 'lucide-react';
 import { PipelineResult } from '../types/research';
 
 interface MarkdownViewProps {
@@ -11,7 +11,48 @@ interface MarkdownViewProps {
 export const MarkdownView: React.FC<MarkdownViewProps> = ({ result }) => {
   const [copiedCodeIdx, setCopiedCodeIdx] = useState<number | null>(null);
 
-  const markdownContent = result.markdown || '';
+  // If backend provided markdown, use it. If dry run and no markdown, construct a structured discovery guide!
+  const markdownContent = React.useMemo(() => {
+    if (result.markdown && result.markdown.trim()) {
+      return result.markdown;
+    }
+
+    if (result.status === 'dry_run') {
+      const json = result.json;
+      const sourceUrls = json?.source_urls || [];
+      const config = json?.config;
+      const discovery = json?.discovery;
+
+      return `# ${json?.display_name || result.provider}: Documentation Discovery Preview
+
+> **Dry Run Mode (Discovery Only):** This report details the official documentation pages discovered and selected by Tavily site-mapping. No full page extraction or LLM reasoning calls were executed.
+
+---
+
+## Discovery Summary
+
+- **Provider:** \`${result.provider}\`
+- **Selected Pages for Extraction:** **${discovery?.selected || sourceUrls.length}**
+- **Candidate URLs Mapped:** **${discovery?.candidates || sourceUrls.length}**
+- **Off-Domain Pages Blocked:** **${discovery?.rejected_offdomain || 0}**
+- **Official Domains Allowed:** \`${config?.domains?.join(', ') || 'Auto-detected'}\` (Source: \`${config?.domain_source || 'registry'}\`)
+- **Documentation Seeds:**
+${config?.seeds?.map((s: string) => `  - \`${s}\``).join('\n') || '  - None'}
+
+---
+
+## Discovered Documentation URLs (${sourceUrls.length})
+
+${sourceUrls.map((url, i) => `${i + 1}. [${url}](${url})`).join('\n')}
+
+---
+
+*To perform topic analysis across all 9 OAuth topics and build the interactive workflow checklist, run a full research job with dry run disabled.*
+`;
+    }
+
+    return '';
+  }, [result]);
 
   const handleCopyCode = (code: string, idx: number) => {
     navigator.clipboard.writeText(code);
@@ -25,9 +66,7 @@ export const MarkdownView: React.FC<MarkdownViewProps> = ({ result }) => {
         <BookOpen className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
         <h3 className="text-lg font-bold text-neutral-300">No Markdown Guide Available</h3>
         <p className="text-xs text-neutral-500 max-w-md mx-auto mt-1">
-          {result.status === 'dry_run'
-            ? 'This was a dry-run discovery job. Check the raw JSON or discovery summary for mapped URLs.'
-            : 'No markdown guide was generated for this run.'}
+          No markdown guide was generated for this run.
         </p>
       </div>
     );

@@ -17,6 +17,7 @@ interface WorkflowViewProps {
   checklistState: Record<string, boolean>;
   onToggleSubStep: (itemKey: string) => void;
   onSelectAllSubSteps: (stepId: string, value: boolean) => void;
+  onRunFullResearch?: (provider: string) => void;
 }
 
 export const WorkflowView: React.FC<WorkflowViewProps> = ({
@@ -24,6 +25,7 @@ export const WorkflowView: React.FC<WorkflowViewProps> = ({
   checklistState,
   onToggleSubStep,
   onSelectAllSubSteps,
+  onRunFullResearch,
 }) => {
   const workflowData = result.json?.workflow;
   const provider = result.provider || '';
@@ -81,14 +83,31 @@ export const WorkflowView: React.FC<WorkflowViewProps> = ({
 
   if (!workflowData || !graph || graph.allSteps.length === 0) {
     return (
-      <div className="w-full max-w-7xl mx-auto bg-black rounded-2xl p-8 border border-neutral-800 text-center">
-        <GitFork className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
-        <h3 className="text-lg font-bold text-neutral-300">No Structured Workflow Steps Found</h3>
-        <p className="text-xs text-neutral-500 max-w-md mx-auto mt-1">
-          {result.status === 'dry_run'
-            ? 'This was a dry-run discovery job. Model synthesis of workflow steps is performed during full runs.'
-            : 'The pipeline did not extract structured workflow steps for this provider.'}
-        </p>
+      <div className="w-full max-w-7xl mx-auto bg-black rounded-2xl p-8 sm:p-12 border border-neutral-800 text-center space-y-4">
+        <GitFork className="w-12 h-12 text-neutral-600 mx-auto" />
+        <div className="space-y-1">
+          <h3 className="text-lg font-bold text-neutral-200">
+            {result.status === 'dry_run' ? 'Dry Run Preview: Workflow Not Generated' : 'No Structured Workflow Steps Found'}
+          </h3>
+          <p className="text-xs text-neutral-400 max-w-md mx-auto">
+            {result.status === 'dry_run'
+              ? 'This was a dry-run discovery job. Tavily mapped official documentation pages, but model reasoning and step synthesis require running a full research job.'
+              : 'The pipeline did not extract structured workflow steps for this provider.'}
+          </p>
+        </div>
+
+        {result.status === 'dry_run' && onRunFullResearch && (
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => onRunFullResearch(result.provider)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-navy-700 to-navy-600 hover:from-navy-600 hover:to-navy-500 text-white border border-navy-500/40 shadow-lg shadow-navy-950 transition-all"
+            >
+              <Sparkles className="w-4 h-4 text-navy-300" />
+              <span>Run Full Research for {result.provider}</span>
+            </button>
+          </div>
+        )}
       </div>
     );
   }
