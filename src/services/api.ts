@@ -40,7 +40,7 @@ export class ApiError extends Error {
 
 export async function checkBackendHealth(): Promise<{ ok: boolean; statusText?: string }> {
   try {
-    const res = await fetch(`${BASE_URL}/healthz/`, {
+    const res = await fetch(`${BASE_URL}/api/healthz/`, {
       headers: buildHeaders(),
       cache: 'no-store',
     });
