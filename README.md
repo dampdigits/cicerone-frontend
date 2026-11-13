@@ -65,18 +65,29 @@ Supports branching based on:
 - \`pnpm\` >= 9 (Tested on v11)
 - Cicerone Django backend running on \`http://127.0.0.1:8000\`
 
-### 2. Install Dependencies
+### 2. Configure Environment Variables
+Create or edit \`.env.local\` in the project root:
+\`\`\`env
+# Cicerone Backend API Domain URL
+VITE_BACKEND_DOMAIN_URL=http://localhost:8000
+
+# Optional API Key / Bearer Token for authenticated endpoints
+# VITE_API_KEY=your_optional_api_key_here
+# VITE_AUTH_HEADER=Authorization
+\`\`\`
+
+### 3. Install Dependencies
 \`\`\`bash
 pnpm install
 \`\`\`
 
-### 3. Run Development Server
+### 4. Run Development Server
 \`\`\`bash
 pnpm dev
 \`\`\`
-The frontend will start on \`http://localhost:3000\` and automatically proxy \`/api/\` and \`/healthz/\` requests to the Django backend.
+The frontend will start on \`http://localhost:3000\` and communicate with the backend domain specified in \`VITE_BACKEND_DOMAIN_URL\`.
 
-### 4. Build for Production
+### 5. Build for Production
 \`\`\`bash
 pnpm build
 pnpm preview
